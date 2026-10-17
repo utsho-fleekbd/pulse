@@ -3,13 +3,21 @@ import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { MonitorsService } from './monitors.service.js';
+import { MONITOR_REPOSITORY } from './monitor.repository.js';
+import { InMemoryMonitorRepository } from './in-memory-monitor.repository.js';
 
 describe('MonitorService', () => {
   let service: MonitorsService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [MonitorsService],
+      providers: [
+        MonitorsService,
+        {
+          provide: MONITOR_REPOSITORY,
+          useClass: InMemoryMonitorRepository,
+        },
+      ],
     }).compile();
 
     service = moduleRef.get(MonitorsService);

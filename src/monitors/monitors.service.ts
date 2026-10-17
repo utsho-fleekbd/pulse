@@ -1,11 +1,18 @@
 import { randomUUID } from 'node:crypto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Monitor, MonitorStatus } from './monitor.types.js';
 import { CreateMonitorDto } from './dto/create-monitor.dto.js';
+import {
+  MONITOR_REPOSITORY,
+  type MonitorRepository,
+} from './monitor.repository.js';
 
 @Injectable()
 export class MonitorsService {
-  private readonly monitors: Monitor[] = [];
+  constructor(
+    @Inject(MONITOR_REPOSITORY)
+    private readonly repository: MonitorRepository,
+  ) {}
 
   create(input: CreateMonitorDto): Monitor {
     const monitor: Monitor = {
@@ -15,32 +22,29 @@ export class MonitorsService {
       status: 'pending',
     };
 
-    this.monitors.push(monitor);
+    this.repository.save(monitor);
 
     return { ...monitor };
   }
 
   findAll(status?: MonitorStatus, limit?: number): Monitor[] {
-    const filteredMonitors =
+    const monitors = this.repository.findAll();
+
+    const filtered =
       status === undefined
-        ? this.monitors
-        : this.monitors.filter((monitor) => monitor.status === status);
+        ? monitors
+        : monitors.filter((monitor) => monitor.status === status);
 
-    const paginatedMonitors =
-      limit === undefined ? filteredMonitors : filteredMonitors.slice(0, limit);
-
-    return paginatedMonitors.map((monitor) => ({
-      ...monitor,
-    }));
+    return limit === undefined ? filtered : filtered.slice(0, limit);
   }
 
   findOne(id: string): Monitor {
-    const monitor = this.monitors.find((monitor) => monitor.id === id);
+    const monitor = this.repository.findById(id);
 
-    if (!monitor) {
+    if (monitor === undefined) {
       throw new NotFoundException(`Monitor with ID ${id} was not found`);
     }
 
-    return { ...monitor };
+    return monitor;
   }
 }
