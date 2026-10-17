@@ -3,8 +3,10 @@ import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { MonitorsService } from './monitors.service.js';
-import { MONITOR_REPOSITORY } from './monitor.repository.js';
+import { MONITOR_REPOSITORY, MonitorRepository } from './monitor.repository.js';
 import { InMemoryMonitorRepository } from './in-memory-monitor.repository.js';
+import { Monitor } from './monitor.types.js';
+import { randomUUID } from 'node:crypto';
 
 describe('MonitorService', () => {
   let service: MonitorsService;
@@ -55,5 +57,39 @@ describe('MonitorService', () => {
     returned.name = 'Modified externally';
 
     expect(service.findOne(created.id).name).toBe('Example');
+  });
+
+  it('uses an injected fake repository', async () => {
+    const monitor: Monitor = {
+      id: randomUUID(),
+      name: 'Fake Monitor',
+      url: 'https://example.com',
+      status: 'up',
+    };
+
+    const fakeRepository = {
+      save: (input: Monitor): Monitor => input,
+
+      findAll: (): Monitor[] => [monitor],
+
+      findById: (id: string): Monitor | undefined =>
+        id === monitor.id ? monitor : undefined,
+    } satisfies MonitorRepository;
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        MonitorsService,
+        {
+          provide: MONITOR_REPOSITORY,
+          useValue: fakeRepository,
+        },
+      ],
+    }).compile();
+
+    const testedService = moduleRef.get(MonitorsService);
+
+    expect(testedService.findAll()).toEqual([monitor]);
+
+    expect(testedService.findOne(monitor.id)).toEqual(monitor);
   });
 });

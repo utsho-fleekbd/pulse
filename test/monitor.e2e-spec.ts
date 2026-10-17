@@ -134,4 +134,40 @@ describe('Monitors API', () => {
 
     expect(timing).toEqual(expect.stringMatching(/^\d+(\.\d+)?ms$/));
   });
+
+  it('shares monitor state with the status module', async () => {
+    const beforeResponse = await request(server)
+      .get('/status/summary')
+      .expect(200);
+
+    const before: unknown = beforeResponse.body;
+
+    if (
+      typeof before !== 'object' ||
+      before === null ||
+      !('total' in before) ||
+      typeof before.total !== 'number' ||
+      !('pending' in before) ||
+      typeof before.pending !== 'number'
+    ) {
+      throw new Error('Invalid status summary response');
+    }
+
+    await request(server)
+      .post('/monitors')
+      .send({
+        name: 'Shared State Test',
+        url: 'https://example.com',
+      })
+      .expect(201);
+
+    const afterResponse = await request(server)
+      .get('/status/summary')
+      .expect(200);
+
+    expect(afterResponse.body).toMatchObject({
+      total: before.total + 1,
+      pending: before.pending + 1,
+    });
+  });
 });

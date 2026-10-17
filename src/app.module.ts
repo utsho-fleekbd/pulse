@@ -13,9 +13,10 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware.j
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 
 import { RequestTimingInterceptor } from './common/interceptors/request-timing.interceptor.js';
+import { StatusModule } from './status/status.module.js';
 
 @Module({
-  imports: [MonitorsModule],
+  imports: [MonitorsModule, StatusModule],
 
   controllers: [AppController],
 

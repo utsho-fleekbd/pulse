@@ -13,5 +13,6 @@ import { InMemoryMonitorRepository } from './in-memory-monitor.repository.js';
       useClass: InMemoryMonitorRepository,
     },
   ],
+  exports: [MonitorsService],
 })
 export class MonitorsModule {}
