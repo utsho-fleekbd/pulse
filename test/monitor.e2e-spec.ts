@@ -96,4 +96,42 @@ describe('Monitors API', () => {
   it('rejects malformed UUIDs', async () => {
     await request(server).get('/monitors/invalid-id').expect(400);
   });
+
+  it('filters monitors by status', async () => {
+    const response = await request(server)
+      .get('/monitors?status=up')
+      .expect(200);
+
+    expect(response.body).toEqual([]);
+  });
+
+  it('returns a standardized validation error', async () => {
+    const response = await request(server)
+      .get('/monitors?status=offline')
+      .expect(400);
+
+    expect(response.body).toMatchObject({
+      statusCode: 400,
+      message: 'status must be pending, up, or down',
+      path: '/monitors?status=offline',
+    });
+  });
+
+  it('includes request ID and timing headers', async () => {
+    const first = await request(server).get('/monitors').expect(200);
+
+    const second = await request(server).get('/monitors').expect(200);
+
+    const firstId: unknown = first.headers['x-request-id'];
+
+    const secondId: unknown = second.headers['x-request-id'];
+
+    const timing: unknown = first.headers['x-response-time'];
+
+    expect(typeof firstId).toBe('string');
+    expect(typeof secondId).toBe('string');
+    expect(firstId).not.toBe(secondId);
+
+    expect(timing).toEqual(expect.stringMatching(/^\d+(\.\d+)?ms$/));
+  });
 });

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Monitor } from './monitor.types.js';
+import { Monitor, MonitorStatus } from './monitor.types.js';
 import { CreateMonitorDto } from './dto/create-monitor.dto.js';
 
 @Injectable()
@@ -20,8 +20,16 @@ export class MonitorsService {
     return { ...monitor };
   }
 
-  findAll(): Monitor[] {
-    return this.monitors.map((monitor) => ({
+  findAll(status?: MonitorStatus, limit?: number): Monitor[] {
+    const filteredMonitors =
+      status === undefined
+        ? this.monitors
+        : this.monitors.filter((monitor) => monitor.status === status);
+
+    const paginatedMonitors =
+      limit === undefined ? filteredMonitors : filteredMonitors.slice(0, limit);
+
+    return paginatedMonitors.map((monitor) => ({
       ...monitor,
     }));
   }
