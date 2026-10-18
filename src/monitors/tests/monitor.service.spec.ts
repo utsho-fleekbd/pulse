@@ -13,6 +13,8 @@ import { Monitor } from '../types/monitor.types.js';
 import { ChecksService } from '../../checks/checks.service.js';
 import { MonitorsModule } from '../monitors.module.js';
 import { ChecksModule } from '../../checks/checks.module.js';
+import { CheckResult } from '../../checks/types/check-result.types.js';
+import { MonitorCheck } from '../types/monitor-check.types.js';
 
 describe('MonitorService', () => {
   let service: MonitorsService;
@@ -81,6 +83,10 @@ describe('MonitorService', () => {
 
       findById: (id: string): Monitor | undefined =>
         id === monitor.id ? monitor : undefined,
+
+      recordCheck: (_monitorId: string, _result: CheckResult): void => {},
+
+      findChecks: (_monitorId: string, _limit: number): MonitorCheck[] => [],
     } satisfies MonitorRepository;
 
     const moduleRef = await Test.createTestingModule({
@@ -94,11 +100,14 @@ describe('MonitorService', () => {
       ],
     }).compile();
 
-    const testedService = moduleRef.get(MonitorsService);
+    try {
+      const testedService = moduleRef.get(MonitorsService);
 
-    expect(testedService.findAll()).toEqual([monitor]);
-
-    expect(testedService.findOne(monitor.id)).toEqual(monitor);
+      expect(testedService.findAll()).toEqual([monitor]);
+      expect(testedService.findOne(monitor.id)).toEqual(monitor);
+    } finally {
+      await moduleRef.close();
+    }
   });
 
   it('updates monitor status after a check', async () => {
@@ -139,6 +148,20 @@ describe('MonitorService', () => {
       const updated = service.findOne(monitor.id);
 
       expect(updated.status).toBe('down');
+
+      const history = service.findChecks(monitor.id);
+
+      expect(history).toHaveLength(1);
+
+      expect(history[0]).toMatchObject({
+        monitorId: monitor.id,
+        status: 'down',
+        statusCode: 503,
+        reason: 'unhealthy_status',
+      });
+
+      expect(history[0]?.id).toEqual(expect.any(String));
+      expect(history[0]?.checkedAt).toBeInstanceOf(Date);
     } finally {
       await moduleRef.close();
     }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpStatus,
@@ -16,6 +17,7 @@ import type { Monitor, MonitorStatus } from './types/monitor.types.js';
 import { MonitorsService } from './monitors.service.js';
 import { ParseMonitorStatusPipe } from './pipes/parse-monitor-status.pipe.js';
 import { CheckResult } from '../checks/types/check-result.types.js';
+import { MonitorCheck } from './types/monitor-check.types.js';
 
 @Controller('monitors')
 export class MonitorsController {
@@ -49,5 +51,16 @@ export class MonitorsController {
     id: string,
   ): Promise<CheckResult> {
     return this.monitorsService.checkNow(id);
+  }
+
+  @Get(':id/checks')
+  findChecks(
+    @Param('id', new ParseUUIDPipe({ version: '4' }))
+    id: string,
+
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe)
+    limit: number,
+  ): MonitorCheck[] {
+    return this.monitorsService.findChecks(id, limit);
   }
 }

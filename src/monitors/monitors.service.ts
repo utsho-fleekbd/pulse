@@ -1,5 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Monitor, MonitorStatus } from './types/monitor.types.js';
 import { CreateMonitorDto } from './dto/create-monitor.dto.js';
 import {
@@ -8,6 +13,7 @@ import {
 } from './repository/monitor.repository.js';
 import { ChecksService } from '../checks/checks.service.js';
 import { CheckResult } from '../checks/types/check-result.types.js';
+import { MonitorCheck } from './types/monitor-check.types.js';
 
 @Injectable()
 export class MonitorsService {
@@ -56,11 +62,18 @@ export class MonitorsService {
 
     const result = await this.checksService.check(monitor.url);
 
-    this.repository.save({
-      ...monitor,
-      status: result.status,
-    });
+    this.repository.recordCheck(monitor.id, result);
 
     return result;
+  }
+
+  findChecks(id: string, limit = 20): MonitorCheck[] {
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
+      throw new BadRequestException('Limit must be between 1 and 100');
+    }
+
+    this.findOne(id);
+
+    return this.repository.findChecks(id, limit);
   }
 }
