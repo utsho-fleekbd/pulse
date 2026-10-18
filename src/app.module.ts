@@ -15,9 +15,16 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { RequestTimingInterceptor } from './common/interceptors/request-timing.interceptor.js';
 import { StatusModule } from './status/status.module.js';
 import { ChecksModule } from './checks/checks.module.js';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [MonitorsModule, StatusModule, ChecksModule],
+  imports: [
+    ScheduleModule.forRoot(),
+
+    MonitorsModule,
+    StatusModule,
+    ChecksModule,
+  ],
 
   controllers: [AppController],
 
