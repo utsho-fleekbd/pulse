@@ -1,4 +1,4 @@
-import type { Monitor } from './monitor.types.js';
+import type { Monitor } from '../types/monitor.types.js';
 
 export const MONITOR_REPOSITORY = Symbol('MONITOR_REPOSITORY');
 

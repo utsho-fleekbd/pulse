@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Monitor, MonitorStatus } from './monitor.types.js';
+import { Monitor, MonitorStatus } from './types/monitor.types.js';
 import { CreateMonitorDto } from './dto/create-monitor.dto.js';
 import {
   MONITOR_REPOSITORY,
   type MonitorRepository,
-} from './monitor.repository.js';
+} from './repository/monitor.repository.js';
 import { ChecksService } from '../checks/checks.service.js';
-import { CheckResult } from '../checks/check-result.types.js';
+import { CheckResult } from '../checks/types/check-result.types.js';
 
 @Injectable()
 export class MonitorsService {

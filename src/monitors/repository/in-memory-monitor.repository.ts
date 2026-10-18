@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import type { Monitor } from './monitor.types.js';
-import type { MonitorRepository } from './monitor.repository.js';
+import type { Monitor } from '../types/monitor.types.js';
+import type { MonitorRepository } from '../monitor.repository.js';
 
 @Injectable()
 export class InMemoryMonitorRepository implements MonitorRepository {

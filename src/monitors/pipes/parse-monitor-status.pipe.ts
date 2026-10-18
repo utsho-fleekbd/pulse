@@ -4,7 +4,7 @@ import {
   type PipeTransform,
 } from '@nestjs/common';
 
-import type { MonitorStatus } from '../monitor.types.js';
+import type { MonitorStatus } from '../types/monitor.types.js';
 
 @Injectable()
 export class ParseMonitorStatusPipe implements PipeTransform<

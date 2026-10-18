@@ -7,17 +7,17 @@ import { MiddlewareConsumer, Module, type NestModule } from '@nestjs/common';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 
-import { MonitorsModule } from './monitors/monitors.module.js';
-import { MonitorsController } from './monitors/monitors.controller.js';
+import { MonitorsModule } from '../monitors/monitors.module.js';
+import { MonitorsController } from '../monitors/monitors.controller.js';
 
-import { RequestIdMiddleware } from './common/middleware/request-id.middleware.js';
+import { RequestIdMiddleware } from '../common/middleware/request-id.middleware.js';
 
-import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
+import { HttpExceptionFilter } from '../common/filters/http-exception.filter.js';
 
-import { RequestTimingInterceptor } from './common/interceptors/request-timing.interceptor.js';
-import { StatusModule } from './status/status.module.js';
-import { ChecksModule } from './checks/checks.module.js';
-import { createDatabase } from './database/db.js';
+import { RequestTimingInterceptor } from '../common/interceptors/request-timing.interceptor.js';
+import { StatusModule } from '../status/status.module.js';
+import { ChecksModule } from '../checks/checks.module.js';
+import { createDatabase } from '../database/db.js';
 
 @Module({
   imports: [

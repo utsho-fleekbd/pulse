@@ -1,15 +1,18 @@
-import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { randomUUID } from 'node:crypto';
+import { NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { MonitorsService } from './monitors.service.js';
-import { MONITOR_REPOSITORY, MonitorRepository } from './monitor.repository.js';
-import { InMemoryMonitorRepository } from './in-memory-monitor.repository.js';
-import { Monitor } from './monitor.types.js';
-import { randomUUID } from 'node:crypto';
-import { ChecksService } from '../checks/checks.service.js';
-import { MonitorsModule } from './monitors.module.js';
-import { ChecksModule } from '../checks/checks.module.js';
+import { MonitorsService } from '../monitors.service.js';
+import {
+  MONITOR_REPOSITORY,
+  MonitorRepository,
+} from '../repository/monitor.repository.js';
+import { InMemoryMonitorRepository } from '../repository/in-memory-monitor.repository.js';
+import { Monitor } from '../types/monitor.types.js';
+import { ChecksService } from '../../checks/checks.service.js';
+import { MonitorsModule } from '../monitors.module.js';
+import { ChecksModule } from '../../checks/checks.module.js';
 
 describe('MonitorService', () => {
   let service: MonitorsService;

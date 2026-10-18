@@ -2,8 +2,8 @@ import { Test } from '@nestjs/testing';
 import type { LoggerService } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
 
-import { MonitorsScheduler } from './monitors.scheduler.js';
-import { MonitorsService } from './monitors.service.js';
+import { MonitorsScheduler } from '../monitors.scheduler.js';
+import { MonitorsService } from '../monitors.service.js';
 
 describe('MonitorsScheduler', () => {
   it('checks all monitors, even if one fails', async () => {

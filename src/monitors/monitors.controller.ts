@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 
 import { CreateMonitorDto } from './dto/create-monitor.dto.js';
-import type { Monitor, MonitorStatus } from './monitor.types.js';
+import type { Monitor, MonitorStatus } from './types/monitor.types.js';
 import { MonitorsService } from './monitors.service.js';
 import { ParseMonitorStatusPipe } from './pipes/parse-monitor-status.pipe.js';
-import { CheckResult } from '../checks/check-result.types.js';
+import { CheckResult } from '../checks/types/check-result.types.js';
 
 @Controller('monitors')
 export class MonitorsController {

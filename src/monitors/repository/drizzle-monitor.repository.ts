@@ -2,10 +2,10 @@ import { eq } from 'drizzle-orm';
 import { Injectable } from '@nestjs/common';
 import { InjectDrizzle } from '@nestjs/drizzle';
 
-import type { Database } from '../database/db.js';
-import { monitors } from '../database/schemas/monitors.schema.js';
+import type { Database } from '../../database/db.js';
+import { monitors } from '../../database/schemas/monitors.schema.js';
 
-import type { Monitor } from './monitor.types.js';
+import type { Monitor } from '../types/monitor.types.js';
 import type { MonitorRepository } from './monitor.repository.js';
 
 @Injectable()

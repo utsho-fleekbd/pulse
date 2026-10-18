@@ -5,7 +5,7 @@ import {
   HttpTimeoutError,
 } from '@nestjs/http-client';
 
-import type { CheckResult } from './check-result.types.js';
+import type { CheckResult } from './types/check-result.types.js';
 
 const ALLOWED_HOSTS = new Set(['example.com', 'api.github.com']);
 
