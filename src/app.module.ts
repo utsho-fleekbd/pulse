@@ -14,9 +14,10 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 
 import { RequestTimingInterceptor } from './common/interceptors/request-timing.interceptor.js';
 import { StatusModule } from './status/status.module.js';
+import { ChecksModule } from './checks/checks.module.js';
 
 @Module({
-  imports: [MonitorsModule, StatusModule],
+  imports: [MonitorsModule, StatusModule, ChecksModule],
 
   controllers: [AppController],
 

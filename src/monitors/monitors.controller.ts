@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
@@ -13,6 +15,7 @@ import { CreateMonitorDto } from './dto/create-monitor.dto.js';
 import type { Monitor, MonitorStatus } from './monitor.types.js';
 import { MonitorsService } from './monitors.service.js';
 import { ParseMonitorStatusPipe } from './pipes/parse-monitor-status.pipe.js';
+import { CheckResult } from '../checks/check-result.types.js';
 
 @Controller('monitors')
 export class MonitorsController {
@@ -37,5 +40,14 @@ export class MonitorsController {
     id: string,
   ): Monitor {
     return this.monitorsService.findOne(id);
+  }
+
+  @Post(':id/check')
+  @HttpCode(HttpStatus.OK)
+  checkNow(
+    @Param('id', new ParseUUIDPipe({ version: '4' }))
+    id: string,
+  ): Promise<CheckResult> {
+    return this.monitorsService.checkNow(id);
   }
 }

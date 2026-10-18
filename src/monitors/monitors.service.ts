@@ -6,12 +6,15 @@ import {
   MONITOR_REPOSITORY,
   type MonitorRepository,
 } from './monitor.repository.js';
+import { ChecksService } from '../checks/checks.service.js';
+import { CheckResult } from '../checks/check-result.types.js';
 
 @Injectable()
 export class MonitorsService {
   constructor(
     @Inject(MONITOR_REPOSITORY)
     private readonly repository: MonitorRepository,
+    private readonly checksService: ChecksService,
   ) {}
 
   create(input: CreateMonitorDto): Monitor {
@@ -46,5 +49,18 @@ export class MonitorsService {
     }
 
     return monitor;
+  }
+
+  async checkNow(id: string): Promise<CheckResult> {
+    const monitor = this.findOne(id);
+
+    const result = await this.checksService.check(monitor.url);
+
+    this.repository.save({
+      ...monitor,
+      status: result.status,
+    });
+
+    return result;
   }
 }

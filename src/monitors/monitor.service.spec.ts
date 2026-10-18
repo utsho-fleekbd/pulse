@@ -7,12 +7,16 @@ import { MONITOR_REPOSITORY, MonitorRepository } from './monitor.repository.js';
 import { InMemoryMonitorRepository } from './in-memory-monitor.repository.js';
 import { Monitor } from './monitor.types.js';
 import { randomUUID } from 'node:crypto';
+import { ChecksService } from '../checks/checks.service.js';
+import { MonitorsModule } from './monitors.module.js';
+import { ChecksModule } from '../checks/checks.module.js';
 
 describe('MonitorService', () => {
   let service: MonitorsService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
+      imports: [ChecksModule],
       providers: [
         MonitorsService,
         {
@@ -77,6 +81,7 @@ describe('MonitorService', () => {
     } satisfies MonitorRepository;
 
     const moduleRef = await Test.createTestingModule({
+      imports: [ChecksModule],
       providers: [
         MonitorsService,
         {
@@ -91,5 +96,46 @@ describe('MonitorService', () => {
     expect(testedService.findAll()).toEqual([monitor]);
 
     expect(testedService.findOne(monitor.id)).toEqual(monitor);
+  });
+
+  it('updates monitor status after a check', async () => {
+    const check = vi.fn<ChecksService['check']>();
+
+    check.mockResolvedValueOnce({
+      status: 'down',
+      statusCode: 503,
+      reason: 'unhealthy_status',
+      responseTimeMs: 120,
+      checkedAt: new Date(),
+    });
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [MonitorsModule],
+    })
+      .overrideProvider(ChecksService)
+      .useValue({ check })
+      .compile();
+
+    try {
+      const service = moduleRef.get(MonitorsService);
+
+      const monitor = service.create({
+        name: 'Example',
+        url: 'https://example.com',
+      });
+
+      expect(monitor.status).toBe('pending');
+
+      const result = await service.checkNow(monitor.id);
+
+      expect(result.status).toBe('down');
+      expect(check).toHaveBeenCalledWith(monitor.url);
+
+      const updated = service.findOne(monitor.id);
+
+      expect(updated.status).toBe('down');
+    } finally {
+      await moduleRef.close();
+    }
   });
 });
