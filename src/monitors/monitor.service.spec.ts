@@ -112,6 +112,8 @@ describe('MonitorService', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [MonitorsModule],
     })
+      .overrideProvider(MONITOR_REPOSITORY)
+      .useClass(InMemoryMonitorRepository)
       .overrideProvider(ChecksService)
       .useValue({ check })
       .compile();

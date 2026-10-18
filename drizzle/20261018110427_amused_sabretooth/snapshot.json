@@ -1,0 +1,198 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "ed991b22-273b-47b9-94c0-55572cbb3ecd",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "check_results",
+      "entityType": "tables"
+    },
+    {
+      "name": "monitors",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "check_results"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "monitor_id",
+      "entityType": "columns",
+      "table": "check_results"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "check_results"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "status_code",
+      "entityType": "columns",
+      "table": "check_results"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "reason",
+      "entityType": "columns",
+      "table": "check_results"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "response_time_ms",
+      "entityType": "columns",
+      "table": "check_results"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "checked_at",
+      "entityType": "columns",
+      "table": "check_results"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "monitors"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "monitors"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "url",
+      "entityType": "columns",
+      "table": "monitors"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'pending'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "monitors"
+    },
+    {
+      "columns": [
+        "monitor_id"
+      ],
+      "tableTo": "monitors",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_check_results_monitor_id_monitors_id_fk",
+      "entityType": "fks",
+      "table": "check_results"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "check_results_pk",
+      "table": "check_results",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "monitors_pk",
+      "table": "monitors",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        {
+          "value": "monitor_id",
+          "isExpression": false
+        },
+        {
+          "value": "checked_at",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "check_results_monitor_time_idx",
+      "entityType": "indexes",
+      "table": "check_results"
+    },
+    {
+      "value": "\"status\" IN ('up', 'down')",
+      "name": "check_results_status_check",
+      "entityType": "checks",
+      "table": "check_results"
+    },
+    {
+      "value": "\"reason\" IS NULL OR \"reason\" IN ('unhealthy_status', 'timeout', 'network_error')",
+      "name": "check_results_reason_check",
+      "entityType": "checks",
+      "table": "check_results"
+    },
+    {
+      "value": "\"status\" IN ('pending', 'up', 'down')",
+      "name": "monitors_status_check",
+      "entityType": "checks",
+      "table": "monitors"
+    }
+  ],
+  "renames": []
+}
